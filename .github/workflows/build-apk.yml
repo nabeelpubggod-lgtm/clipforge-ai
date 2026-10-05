@@ -28,12 +28,12 @@ jobs:
         run: yes | sdkmanager --licenses || true
 
       - name: Set up Gradle
-         uses: gradle/actions/setup-gradle@v4
-           with:
+        uses: gradle/actions/setup-gradle@v4
+        with:
                gradle-version: '9.6.0'
 
       - name: Build debug APK
-         run: gradle assembleDebug --no-daemon
+        run: gradle assembleDebug --no-daemon
 
      
 
