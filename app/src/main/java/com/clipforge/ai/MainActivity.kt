@@ -1,14 +1,13 @@
 package com.clipforge.ai
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,18 +16,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -62,7 +57,7 @@ class MainActivity : ComponentActivity() {
 
 private enum class Screen {
     Dashboard,
-    CreateClip,
+    Create,
     Analysis,
     Projects,
     Settings
@@ -71,102 +66,86 @@ private enum class Screen {
 @Composable
 fun ClipForgeApp() {
 
-    var currentScreen by remember {
+    var screen by remember {
         mutableStateOf(Screen.Dashboard)
     }
 
-    var selectedVideoUri by remember {
+    var videoUri by remember {
         mutableStateOf<Uri?>(null)
     }
 
-    val videoPicker =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.OpenDocument()
-        ) { uri ->
-
-            if (uri != null) {
-                selectedVideoUri = uri
-            }
+    val picker = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            videoUri = uri
         }
+    }
 
     MaterialTheme {
 
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = Color.Transparent
+            color = Color(0xFF09051F)
         ) {
 
-            when (currentScreen) {
+            when (screen) {
 
-                Screen.Dashboard -> {
-                    DashboardScreen(
-                        onCreateClip = {
-                            currentScreen = Screen.CreateClip
-                        },
-                        onAnalysis = {
-                            currentScreen = Screen.Analysis
-                        },
-                        onProjects = {
-                            currentScreen = Screen.Projects
-                        },
-                        onSettings = {
-                            currentScreen = Screen.Settings
-                        }
-                    )
-                }
+                Screen.Dashboard -> Dashboard(
+                    create = { screen = Screen.Create },
+                    analysis = { screen = Screen.Analysis },
+                    projects = { screen = Screen.Projects },
+                    settings = { screen = Screen.Settings }
+                )
 
-                Screen.CreateClip -> {
-                    CreateClipScreen(
-                        selectedVideoUri = selectedVideoUri,
-                        onPickVideo = {
-                            videoPicker.launch(arrayOf("video/*"))
-                        },
-                        onContinue = {
-                            if (selectedVideoUri != null) {
-                                currentScreen = Screen.Analysis
-                            }
-                        },
-                        onBack = {
-                            currentScreen = Screen.Dashboard
+                Screen.Create -> CreateScreen(
+                    videoUri = videoUri,
+                    pickVideo = {
+                        picker.launch(arrayOf("video/*"))
+                    },
+                    continueAnalysis = {
+                        if (videoUri != null) {
+                            screen = Screen.Analysis
                         }
-                    )
-                }
+                    },
+                    back = {
+                        screen = Screen.Dashboard
+                    }
+                )
 
-                Screen.Analysis -> {
-                    AnalysisScreen(
-                        selectedVideoUri = selectedVideoUri,
-                        onBack = {
-                            currentScreen = Screen.Dashboard
-                        }
-                    )
-                }
+                Screen.Analysis -> AnalysisScreen(
+                    videoUri = videoUri,
+                    back = {
+                        screen = Screen.Dashboard
+                    }
+                )
 
-                Screen.Projects -> {
-                    ProjectsScreen(
-                        onBack = {
-                            currentScreen = Screen.Dashboard
-                        }
-                    )
-                }
+                Screen.Projects -> SimpleScreen(
+                    title = "My Projects",
+                    icon = "📁",
+                    message = "Your saved projects and generated clips will appear here.",
+                    back = {
+                        screen = Screen.Dashboard
+                    }
+                )
 
-                Screen.Settings -> {
-                    SettingsScreen(
-                        onBack = {
-                            currentScreen = Screen.Dashboard
-                        }
-                    )
-                }
+                Screen.Settings -> SimpleScreen(
+                    title = "Settings",
+                    icon = "⚙️",
+                    message = "AI preferences, video quality and account settings will appear here.",
+                    back = {
+                        screen = Screen.Dashboard
+                    }
+                )
             }
         }
     }
 }
 
-/* ------------------------------------------------ */
-/* BACKGROUND */
-/* ------------------------------------------------ */
+/* ---------------- BACKGROUND ---------------- */
 
 @Composable
-fun ClipForgeBackground(
+fun AppBackground(
     content: @Composable () -> Unit
 ) {
 
@@ -176,9 +155,9 @@ fun ClipForgeBackground(
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFF09051F),
-                        Color(0xFF10083A),
-                        Color(0xFF08051D)
+                        Color(0xFF08041D),
+                        Color(0xFF12083B),
+                        Color(0xFF09051F)
                     )
                 )
             )
@@ -187,29 +166,13 @@ fun ClipForgeBackground(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(260.dp)
+                .height(300.dp)
                 .background(
                     Brush.radialGradient(
                         colors = listOf(
-                            Color(0xFF632BFF).copy(alpha = 0.30f),
+                            Color(0xFF7138FF).copy(alpha = 0.35f),
                             Color.Transparent
-                        ),
-                        radius = 700f
-                    )
-                )
-        )
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 500.dp)
-                .background(
-                    Brush.radialGradient(
-                        colors = listOf(
-                            Color(0xFFB21FFF).copy(alpha = 0.18f),
-                            Color.Transparent
-                        ),
-                        radius = 600f
+                        )
                     )
                 )
         )
@@ -218,32 +181,28 @@ fun ClipForgeBackground(
     }
 }
 
-/* ------------------------------------------------ */
-/* TOP BAR */
-/* ------------------------------------------------ */
+/* ---------------- TOP BAR ---------------- */
 
 @Composable
-fun TopBar(
+fun Header(
     title: String,
-    onBack: (() -> Unit)? = null
+    back: (() -> Unit)? = null
 ) {
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .statusBarsPadding()
-            .padding(horizontal = 20.dp, vertical = 16.dp),
+            .padding(horizontal = 20.dp, vertical = 18.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        if (onBack != null) {
+        if (back != null) {
 
             Text(
                 text = "‹",
                 color = Color.White,
-                fontSize = 40.sp,
-                modifier = Modifier
-                    .padding(end = 10.dp)
+                fontSize = 42.sp,
+                modifier = Modifier.padding(end = 10.dp)
             )
         }
 
@@ -251,8 +210,8 @@ fun TopBar(
 
             Text(
                 text = "CLIPFORGE AI",
-                color = Color(0xFFB99AFF),
-                fontSize = 12.sp,
+                color = Color(0xFFAA8CFF),
+                fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 2.sp
             )
@@ -260,192 +219,150 @@ fun TopBar(
             Text(
                 text = title,
                 color = Color.White,
-                fontSize = 20.sp,
+                fontSize = 21.sp,
                 fontWeight = FontWeight.Bold
             )
         }
     }
 }
 
-/* ------------------------------------------------ */
-/* DASHBOARD */
-/* ------------------------------------------------ */
+/* ---------------- DASHBOARD ---------------- */
 
 @Composable
-fun DashboardScreen(
-    onCreateClip: () -> Unit,
-    onAnalysis: () -> Unit,
-    onProjects: () -> Unit,
-    onSettings: () -> Unit
+fun Dashboard(
+    create: () -> Unit,
+    analysis: () -> Unit,
+    projects: () -> Unit,
+    settings: () -> Unit
 ) {
 
-    ClipForgeBackground {
+    AppBackground {
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .statusBarsPadding()
-                .navigationBarsPadding()
                 .padding(20.dp)
         ) {
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(25.dp))
 
             Text(
                 text = "CLIPFORGE",
-                color = Color(0xFFB58CFF),
+                color = Color(0xFFAE8CFF),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 3.sp
             )
 
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = "Turn long videos\ninto viral clips.",
                 color = Color.White,
-                fontSize = 36.sp,
+                fontSize = 35.sp,
                 fontWeight = FontWeight.ExtraBold,
-                lineHeight = 42.sp
+                lineHeight = 40.sp
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             Text(
-                text = "AI-powered video clipping designed for creators.",
-                color = Color(0xFFB9B3D0),
-                fontSize = 16.sp,
-                lineHeight = 24.sp
+                text = "AI-powered video clipping built for creators.",
+                color = Color(0xFFB7B0CB),
+                fontSize = 15.sp
             )
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(25.dp))
 
-            /* MAIN CREATE CARD */
+            GlassCard {
 
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(28.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF17113B).copy(alpha = 0.92f)
-                ),
-                border = BorderStroke(
-                    1.dp,
-                    Color(0xFF714DFF).copy(alpha = 0.55f)
+                Text(
+                    text = "🎬",
+                    fontSize = 40.sp
                 )
-            ) {
 
-                Column(
-                    modifier = Modifier.padding(24.dp)
-                ) {
+                Spacer(modifier = Modifier.height(10.dp))
 
-                    Text(
-                        text = "🎬",
-                        fontSize = 38.sp
-                    )
+                Text(
+                    text = "Create your next clip",
+                    color = Color.White,
+                    fontSize = 23.sp,
+                    fontWeight = FontWeight.Bold
+                )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
-                    Text(
-                        text = "Create your next clip",
-                        color = Color.White,
-                        fontSize = 23.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                Text(
+                    text = "Upload a long-form video and let AI find the strongest moments.",
+                    color = Color(0xFFAAA4BF),
+                    fontSize = 14.sp,
+                    lineHeight = 21.sp
+                )
 
-                    Spacer(modifier = Modifier.height(7.dp))
+                Spacer(modifier = Modifier.height(18.dp))
 
-                    Text(
-                        text = "Upload a long-form video and let ClipForge find the strongest moments.",
-                        color = Color(0xFFBDB7D5),
-                        fontSize = 14.sp,
-                        lineHeight = 21.sp
-                    )
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    GradientButton(
-                        text = "Create New Clip  →",
-                        onClick = onCreateClip
-                    )
-                }
+                PurpleButton(
+                    text = "Create New Clip  →",
+                    onClick = create
+                )
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(22.dp))
 
             Text(
-                text = "POWERFUL CREATOR TOOLS",
-                color = Color(0xFF8E82B9),
-                fontSize = 12.sp,
+                text = "CREATOR TOOLS",
+                color = Color(0xFF8379A8),
+                fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
-                letterSpacing = 1.5.sp
+                letterSpacing = 2.sp
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            ToolCard(
+            ToolButton(
                 icon = "🤖",
                 title = "AI Clip Analysis",
                 subtitle = "Find the strongest moments",
-                onClick = onAnalysis
+                onClick = analysis
             )
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            ToolCard(
+            ToolButton(
                 icon = "📁",
                 title = "My Projects",
-                subtitle = "Your saved clips and projects",
-                onClick = onProjects
+                subtitle = "Saved clips and projects",
+                onClick = projects
             )
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            ToolCard(
+            ToolButton(
                 icon = "⚙️",
                 title = "Settings",
                 subtitle = "Preferences and AI settings",
-                onClick = onSettings
+                onClick = settings
             )
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(25.dp))
 
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(22.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF15102F)
+            GlassCard {
+
+                Text(
+                    text = "✨ AI WORKFLOW",
+                    color = Color(0xFFB99AFF),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
                 )
-            ) {
 
-                Row(
-                    modifier = Modifier.padding(20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Spacer(modifier = Modifier.height(8.dp))
 
-                    Text(
-                        text = "✨",
-                        fontSize = 28.sp
-                    )
-
-                    Spacer(modifier = Modifier.width(14.dp))
-
-                    Column {
-
-                        Text(
-                            text = "AI-powered workflow",
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp
-                        )
-
-                        Text(
-                            text = "Analyze • Clip • Edit • Export",
-                            color = Color(0xFF9F96BE),
-                            fontSize = 13.sp
-                        )
-                    }
-                }
+                Text(
+                    text = "Analyze  •  Clip  •  Edit  •  Export",
+                    color = Color.White,
+                    fontSize = 15.sp
+                )
             }
 
             Spacer(modifier = Modifier.height(30.dp))
@@ -453,30 +370,27 @@ fun DashboardScreen(
     }
 }
 
-/* ------------------------------------------------ */
-/* CREATE CLIP */
-/* ------------------------------------------------ */
+/* ---------------- CREATE ---------------- */
 
 @Composable
-fun CreateClipScreen(
-    selectedVideoUri: Uri?,
-    onPickVideo: () -> Unit,
-    onContinue: () -> Unit,
-    onBack: () -> Unit
+fun CreateScreen(
+    videoUri: Uri?,
+    pickVideo: () -> Unit,
+    continueAnalysis: () -> Unit,
+    back: () -> Unit
 ) {
 
-    ClipForgeBackground {
+    AppBackground {
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .navigationBarsPadding()
         ) {
 
-            TopBar(
+            Header(
                 title = "Create New Clip",
-                onBack = onBack
+                back = back
             )
 
             Column(
@@ -484,51 +398,33 @@ fun CreateClipScreen(
             ) {
 
                 Text(
-                    text = "Upload your long-form video",
+                    text = "Select your video",
                     color = Color.White,
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    lineHeight = 36.sp
+                    fontSize = 31.sp,
+                    fontWeight = FontWeight.ExtraBold
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "ClipForge AI will analyze it and identify the best moments for short-form content.",
-                    color = Color(0xFFB8B1CE),
+                    text = "Choose a long-form video and prepare it for AI analysis.",
+                    color = Color(0xFFAAA4BF),
                     fontSize = 15.sp,
-                    lineHeight = 23.sp
+                    lineHeight = 22.sp
                 )
 
-                Spacer(modifier = Modifier.height(25.dp))
+                Spacer(modifier = Modifier.height(22.dp))
 
-                /* UPLOAD AREA */
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(210.dp),
-                    shape = RoundedCornerShape(28.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFF12102D).copy(alpha = 0.85f)
-                    ),
-                    border = BorderStroke(
-                        1.dp,
-                        Color(0xFF7354FF).copy(alpha = 0.8f)
-                    )
-                ) {
+                GlassCard {
 
                     Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
 
                         Text(
                             text = "📁",
-                            fontSize = 48.sp
+                            fontSize = 52.sp
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -544,26 +440,22 @@ fun CreateClipScreen(
 
                         Text(
                             text = "MP4 • MOV • AVI • MKV",
-                            color = Color(0xFF9690B4),
-                            fontSize = 13.sp
+                            color = Color(0xFF8F88AA),
+                            fontSize = 12.sp
                         )
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(15.dp))
 
                         OutlinedButton(
-                            onClick = onPickVideo,
-                            shape = RoundedCornerShape(16.dp),
-                            border = BorderStroke(
-                                1.dp,
-                                Color(0xFF8D69FF)
-                            ),
+                            onClick = pickVideo,
+                            shape = RoundedCornerShape(15.dp),
                             colors = ButtonDefaults.outlinedButtonColors(
                                 contentColor = Color.White
                             )
                         ) {
 
                             Text(
-                                text = if (selectedVideoUri == null)
+                                text = if (videoUri == null)
                                     "Choose Video"
                                 else
                                     "Change Video"
@@ -572,81 +464,217 @@ fun CreateClipScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(18.dp))
+                Spacer(modifier = Modifier.height(15.dp))
 
-                /* SELECTED VIDEO */
+                if (videoUri != null) {
 
-                if (selectedVideoUri != null) {
+                    GlassCard {
 
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(22.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color(0xFF17143A)
-                        ),
-                        border = BorderStroke(
-                            1.dp,
-                            Color(0xFF4E3C9E)
-                        )
-                    ) {
-
-                        Column(
-                            modifier = Modifier.padding(18.dp)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
 
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
+                            Box(
+                                modifier = Modifier
+                                    .size(45.dp)
+                                    .clip(RoundedCornerShape(14.dp))
+                                    .background(Color(0xFF20D99A)),
+                                contentAlignment = Alignment.Center
                             ) {
 
                                 Text(
                                     text = "✓",
                                     color = Color.White,
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier
-                                        .size(42.dp)
-                                        .clip(RoundedCornerShape(14.dp))
-                                        .background(Color(0xFF26D89A))
-                                        .padding(9.dp)
+                                    fontSize = 22.sp,
+                                    fontWeight = FontWeight.Bold
                                 )
-
-                                Spacer(modifier = Modifier.width(12.dp))
-
-                                Column(
-                                    modifier = Modifier.weight(1f)
-                                ) {
-
-                                    Text(
-                                        text = "Video Selected",
-                                        color = Color.White,
-                                        fontSize = 17.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-
-                                    Text(
-                                        text = "Ready for AI analysis",
-                                        color = Color(0xFF8DDFC5),
-                                        fontSize = 12.sp
-                                    )
-                                }
                             }
 
-                            Spacer(modifier = Modifier.height(12.dp))
+                            Spacer(modifier = Modifier.width(12.dp))
 
-                            Text(
-                                text = selectedVideoUri.toString(),
-                                color = Color(0xFFAAA3C3),
-                                fontSize = 11.sp,
-                                maxLines = 3,
-                            )
+                            Column(
+                                modifier = Modifier.weight(1f)
+                            ) {
 
-        Spacer(modifier = Modifier.height(32.dp))
+                                Text(
+                                    text = "Video Selected",
+                                    color = Color.White,
+                                    fontSize = 17.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
 
-        OutlinedButton(
-            onClick = onBack
-        ) {
-            Text("Back to Dashboard")
+                                Text(
+                                    text = "Ready for analysis",
+                                    color = Color(0xFF75E3BE),
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Text(
+                            text = videoUri.toString(),
+                            color = Color(0xFF9690AC),
+                            fontSize = 10.sp,
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(18.dp))
+
+                    PurpleButton(
+                        text = "✨  Continue to AI Analysis  →",
+                        onClick = continueAnalysis
+                    )
+
+                } else {
+
+                    PurpleButton(
+                        text = "Select a Video First",
+                        enabled = false,
+                        onClick = {}
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+
+                    FeatureBox(
+                        icon = "🤖",
+                        title = "AI",
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    FeatureBox(
+                        icon = "✂️",
+                        title = "Auto",
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    FeatureBox(
+                        icon = "HD",
+                        title = "Quality",
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    FeatureBox(
+                        icon = "⚡",
+                        title = "Fast",
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(30.dp))
+            }
         }
     }
 }
+
+/* ---------------- ANALYSIS ---------------- */
+
+@Composable
+fun AnalysisScreen(
+    videoUri: Uri?,
+    back: () -> Unit
+) {
+
+    AppBackground {
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+
+            Header(
+                title = "AI Clip Analysis",
+                back = back
+            )
+
+            Column(
+                modifier = Modifier.padding(20.dp)
+            ) {
+
+                Text(
+                    text = "Ready to discover\nviral moments?",
+                    color = Color.White,
+                    fontSize = 33.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    lineHeight = 39.sp
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Text(
+                    text = "Your selected video is ready for the ClipForge AI analysis pipeline.",
+                    color = Color(0xFFAAA4BF),
+                    fontSize = 15.sp,
+                    lineHeight = 22.sp
+                )
+
+                Spacer(modifier = Modifier.height(22.dp))
+
+                GlassCard {
+
+                    Text(
+                        text = "🤖",
+                        fontSize = 45.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        text = "AI Analysis Pipeline",
+                        color = Color.White,
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(modifier = Modifier.height(18.dp))
+
+                    PipelineRow("01", "Understand Video")
+                    PipelineRow("02", "Find Key Moments")
+                    PipelineRow("03", "Generate Clip Ideas")
+                    PipelineRow("04", "Prepare Export")
                 }
+
+                Spacer(modifier = Modifier.height(18.dp))
+
+                if (videoUri != null) {
+
+                    GlassCard {
+
+                        Text(
+                            text = "VIDEO READY",
+                            color = Color(0xFFAA8CFF),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 1.5.sp
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = videoUri.toString(),
+                            color = Color(0xFF918BA7),
+                            fontSize = 10.sp,
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(18.dp))
+
+                GlassCard {
+
+                    Text(
+                        text = "🚀 NEXT STEP",
+                        color = Color(0xFFB99AFF),
+     
