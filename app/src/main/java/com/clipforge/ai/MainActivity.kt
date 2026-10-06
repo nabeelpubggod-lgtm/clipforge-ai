@@ -700,19 +700,32 @@ fun AnalysisScreen(
                     modifier = Modifier.height(22.dp)
                 )
 
-                GlassCard {
+                                GlassCard {
+                    Column(
+                        modifier = Modifier.padding(18.dp)
+                    ) {
+                        Text(
+                            text = "🚀 NEXT STEP",
+                            color = Color(0xFFBB99FF),
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
 
-                    Text(
-                        text = "🤖",
-                        fontSize = 45.sp
-                    )
+                        Spacer(modifier = Modifier.height(8.dp))
 
-                    Spacer(
-                        modifier = Modifier.height(10.dp)
-                    )
+                        Text(
+                            text = "Your video is ready. Continue to AI Clip Analysis to prepare for the next stage.",
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            lineHeight = 21.sp
+                        )
+                    }
+                }
 
-                    Text(
-                        text = "AI Analysis Pi
+            }
+        }
+    }
+}
 /* ---------------- SIMPLE SCREEN ---------------- */
 
 @Composable
