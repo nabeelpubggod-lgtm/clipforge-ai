@@ -1,8 +1,11 @@
 package com.clipforge.ai
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -40,6 +44,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ClipForgeApp() {
+
     var screen by remember { mutableStateOf("welcome") }
 
     MaterialTheme {
@@ -47,39 +52,56 @@ fun ClipForgeApp() {
             modifier = Modifier.fillMaxSize()
         ) {
             when (screen) {
+
                 "welcome" -> WelcomeScreen(
-                    onGetStarted = { screen = "dashboard" }
+                    onGetStarted = {
+                        screen = "dashboard"
+                    }
                 )
 
                 "dashboard" -> DashboardScreen(
-                    onCreateClip = { screen = "create" },
-                    onAnalysis = { screen = "analysis" },
-                    onProjects = { screen = "projects" },
-                    onSettings = { screen = "settings" }
+                    onCreateClip = {
+                        screen = "create"
+                    },
+                    onAnalysis = {
+                        screen = "analysis"
+                    },
+                    onProjects = {
+                        screen = "projects"
+                    },
+                    onSettings = {
+                        screen = "settings"
+                    }
                 )
 
-                "create" -> FeatureScreen(
-                    title = "Create New Clip",
-                    description = "Select a long-form video and turn the best moments into short-form clips.",
-                    onBack = { screen = "dashboard" }
+                "create" -> CreateClipScreen(
+                    onBack = {
+                        screen = "dashboard"
+                    }
                 )
 
                 "analysis" -> FeatureScreen(
                     title = "AI Clip Analysis",
                     description = "ClipForge AI will analyze your video and identify the strongest moments for short-form content.",
-                    onBack = { screen = "dashboard" }
+                    onBack = {
+                        screen = "dashboard"
+                    }
                 )
 
                 "projects" -> FeatureScreen(
                     title = "My Projects",
                     description = "Your saved ClipForge AI projects and generated clips will appear here.",
-                    onBack = { screen = "dashboard" }
+                    onBack = {
+                        screen = "dashboard"
+                    }
                 )
 
                 "settings" -> FeatureScreen(
                     title = "Settings",
                     description = "App preferences, AI settings and account options will be available here.",
-                    onBack = { screen = "dashboard" }
+                    onBack = {
+                        screen = "dashboard"
+                    }
                 )
             }
         }
@@ -87,7 +109,9 @@ fun ClipForgeApp() {
 }
 
 @Composable
-fun WelcomeScreen(onGetStarted: () -> Unit) {
+fun WelcomeScreen(
+    onGetStarted: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -226,6 +250,101 @@ fun DashboardCard(
 }
 
 @Composable
+fun CreateClipScreen(
+    onBack: () -> Unit
+) {
+    var selectedVideo by remember { mutableStateOf<Uri?>(null) }
+
+    val videoPicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            selectedVideo = uri
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Create New Clip",
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Select a long-form video from your phone.",
+            fontSize = 17.sp
+        )
+
+        Spacer(modifier = Modifier.height(28.dp))
+
+        Button(
+            onClick = {
+                videoPicker.launch(arrayOf("video/*"))
+            }
+        ) {
+            Text(
+                text = if (selectedVideo == null)
+                    "Select Video"
+                else
+                    "Change Video"
+            )
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        if (selectedVideo != null) {
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(18.dp)
+                ) {
+                    Text(
+                        text = "Video Selected",
+                        fontSize = 19.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = selectedVideo.toString(),
+                        fontSize = 13.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Button(
+                        onClick = {
+                            // AI processing will be added next.
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Continue to AI Analysis")
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(28.dp))
+
+        OutlinedButton(
+            onClick = onBack
+        ) {
+            Text("Back to Dashboard")
+        }
+    }
+}
+
+@Composable
 fun FeatureScreen(
     title: String,
     description: String,
@@ -253,8 +372,10 @@ fun FeatureScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        OutlinedButton(onClick = onBack) {
-            Text(text = "Back to Dashboard")
+        OutlinedButton(
+            onClick = onBack
+        ) {
+            Text("Back to Dashboard")
         }
     }
 }
