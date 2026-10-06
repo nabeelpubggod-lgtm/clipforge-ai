@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +45,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,6 +57,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
+/* ---------------- SCREEN STATE ---------------- */
+
 private enum class Screen {
     Dashboard,
     Create,
@@ -62,6 +67,9 @@ private enum class Screen {
     Projects,
     Settings
 }
+
+
+/* ---------------- APP ---------------- */
 
 @Composable
 fun ClipForgeApp() {
@@ -92,10 +100,18 @@ fun ClipForgeApp() {
             when (screen) {
 
                 Screen.Dashboard -> Dashboard(
-                    create = { screen = Screen.Create },
-                    analysis = { screen = Screen.Analysis },
-                    projects = { screen = Screen.Projects },
-                    settings = { screen = Screen.Settings }
+                    create = {
+                        screen = Screen.Create
+                    },
+                    analysis = {
+                        screen = Screen.Analysis
+                    },
+                    projects = {
+                        screen = Screen.Projects
+                    },
+                    settings = {
+                        screen = Screen.Settings
+                    }
                 )
 
                 Screen.Create -> CreateScreen(
@@ -142,6 +158,7 @@ fun ClipForgeApp() {
     }
 }
 
+
 /* ---------------- BACKGROUND ---------------- */
 
 @Composable
@@ -181,6 +198,7 @@ fun AppBackground(
     }
 }
 
+
 /* ---------------- TOP BAR ---------------- */
 
 @Composable
@@ -202,7 +220,11 @@ fun Header(
                 text = "‹",
                 color = Color.White,
                 fontSize = 42.sp,
-                modifier = Modifier.padding(end = 10.dp)
+                modifier = Modifier
+                    .padding(end = 10.dp)
+                    .clickable {
+                        back()
+                    }
             )
         }
 
@@ -226,6 +248,7 @@ fun Header(
     }
 }
 
+
 /* ---------------- DASHBOARD ---------------- */
 
 @Composable
@@ -245,7 +268,9 @@ fun Dashboard(
                 .padding(20.dp)
         ) {
 
-            Spacer(modifier = Modifier.height(25.dp))
+            Spacer(
+                modifier = Modifier.height(25.dp)
+            )
 
             Text(
                 text = "CLIPFORGE",
@@ -255,7 +280,9 @@ fun Dashboard(
                 letterSpacing = 3.sp
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(
+                modifier = Modifier.height(8.dp)
+            )
 
             Text(
                 text = "Turn long videos\ninto viral clips.",
@@ -265,7 +292,9 @@ fun Dashboard(
                 lineHeight = 40.sp
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(
+                modifier = Modifier.height(10.dp)
+            )
 
             Text(
                 text = "AI-powered video clipping built for creators.",
@@ -273,7 +302,9 @@ fun Dashboard(
                 fontSize = 15.sp
             )
 
-            Spacer(modifier = Modifier.height(25.dp))
+            Spacer(
+                modifier = Modifier.height(25.dp)
+            )
 
             GlassCard {
 
@@ -282,7 +313,9 @@ fun Dashboard(
                     fontSize = 40.sp
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(
+                    modifier = Modifier.height(10.dp)
+                )
 
                 Text(
                     text = "Create your next clip",
@@ -291,7 +324,9 @@ fun Dashboard(
                     fontWeight = FontWeight.Bold
                 )
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(
+                    modifier = Modifier.height(6.dp)
+                )
 
                 Text(
                     text = "Upload a long-form video and let AI find the strongest moments.",
@@ -300,7 +335,9 @@ fun Dashboard(
                     lineHeight = 21.sp
                 )
 
-                Spacer(modifier = Modifier.height(18.dp))
+                Spacer(
+                    modifier = Modifier.height(18.dp)
+                )
 
                 PurpleButton(
                     text = "Create New Clip  →",
@@ -308,7 +345,9 @@ fun Dashboard(
                 )
             }
 
-            Spacer(modifier = Modifier.height(22.dp))
+            Spacer(
+                modifier = Modifier.height(22.dp)
+            )
 
             Text(
                 text = "CREATOR TOOLS",
@@ -318,7 +357,9 @@ fun Dashboard(
                 letterSpacing = 2.sp
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(
+                modifier = Modifier.height(12.dp)
+            )
 
             ToolButton(
                 icon = "🤖",
@@ -327,7 +368,9 @@ fun Dashboard(
                 onClick = analysis
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(
+                modifier = Modifier.height(10.dp)
+            )
 
             ToolButton(
                 icon = "📁",
@@ -336,7 +379,9 @@ fun Dashboard(
                 onClick = projects
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(
+                modifier = Modifier.height(10.dp)
+            )
 
             ToolButton(
                 icon = "⚙️",
@@ -345,7 +390,9 @@ fun Dashboard(
                 onClick = settings
             )
 
-            Spacer(modifier = Modifier.height(25.dp))
+            Spacer(
+                modifier = Modifier.height(25.dp)
+            )
 
             GlassCard {
 
@@ -356,7 +403,9 @@ fun Dashboard(
                     fontWeight = FontWeight.Bold
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(
+                    modifier = Modifier.height(8.dp)
+                )
 
                 Text(
                     text = "Analyze  •  Clip  •  Edit  •  Export",
@@ -365,12 +414,15 @@ fun Dashboard(
                 )
             }
 
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(
+                modifier = Modifier.height(30.dp)
+            )
         }
     }
 }
 
-/* ---------------- CREATE ---------------- */
+
+/* ---------------- CREATE SCREEN ---------------- */
 
 @Composable
 fun CreateScreen(
@@ -404,7 +456,9 @@ fun CreateScreen(
                     fontWeight = FontWeight.ExtraBold
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(
+                    modifier = Modifier.height(8.dp)
+                )
 
                 Text(
                     text = "Choose a long-form video and prepare it for AI analysis.",
@@ -413,7 +467,9 @@ fun CreateScreen(
                     lineHeight = 22.sp
                 )
 
-                Spacer(modifier = Modifier.height(22.dp))
+                Spacer(
+                    modifier = Modifier.height(22.dp)
+                )
 
                 GlassCard {
 
@@ -427,7 +483,9 @@ fun CreateScreen(
                             fontSize = 52.sp
                         )
 
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(
+                            modifier = Modifier.height(8.dp)
+                        )
 
                         Text(
                             text = "Select Video",
@@ -436,7 +494,9 @@ fun CreateScreen(
                             fontWeight = FontWeight.Bold
                         )
 
-                        Spacer(modifier = Modifier.height(5.dp))
+                        Spacer(
+                            modifier = Modifier.height(5.dp)
+                        )
 
                         Text(
                             text = "MP4 • MOV • AVI • MKV",
@@ -444,7 +504,9 @@ fun CreateScreen(
                             fontSize = 12.sp
                         )
 
-                        Spacer(modifier = Modifier.height(15.dp))
+                        Spacer(
+                            modifier = Modifier.height(15.dp)
+                        )
 
                         OutlinedButton(
                             onClick = pickVideo,
@@ -455,16 +517,19 @@ fun CreateScreen(
                         ) {
 
                             Text(
-                                text = if (videoUri == null)
+                                text = if (videoUri == null) {
                                     "Choose Video"
-                                else
+                                } else {
                                     "Change Video"
+                                }
                             )
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(15.dp))
+                Spacer(
+                    modifier = Modifier.height(15.dp)
+                )
 
                 if (videoUri != null) {
 
@@ -490,7 +555,9 @@ fun CreateScreen(
                                 )
                             }
 
-                            Spacer(modifier = Modifier.width(12.dp))
+                            Spacer(
+                                modifier = Modifier.width(12.dp)
+                            )
 
                             Column(
                                 modifier = Modifier.weight(1f)
@@ -511,7 +578,9 @@ fun CreateScreen(
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(
+                            modifier = Modifier.height(12.dp)
+                        )
 
                         Text(
                             text = videoUri.toString(),
@@ -522,7 +591,9 @@ fun CreateScreen(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(18.dp))
+                    Spacer(
+                        modifier = Modifier.height(18.dp)
+                    )
 
                     PurpleButton(
                         text = "✨  Continue to AI Analysis  →",
@@ -538,7 +609,9 @@ fun CreateScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(
+                    modifier = Modifier.height(20.dp)
+                )
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -570,13 +643,16 @@ fun CreateScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(
+                    modifier = Modifier.height(30.dp)
+                )
             }
         }
     }
 }
 
-/* ---------------- ANALYSIS ---------------- */
+
+/* ---------------- ANALYSIS SCREEN ---------------- */
 
 @Composable
 fun AnalysisScreen(
@@ -609,7 +685,9 @@ fun AnalysisScreen(
                     lineHeight = 39.sp
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(
+                    modifier = Modifier.height(10.dp)
+                )
 
                 Text(
                     text = "Your selected video is ready for the ClipForge AI analysis pipeline.",
@@ -618,7 +696,9 @@ fun AnalysisScreen(
                     lineHeight = 22.sp
                 )
 
-                Spacer(modifier = Modifier.height(22.dp))
+                Spacer(
+                    modifier = Modifier.height(22.dp)
+                )
 
                 GlassCard {
 
@@ -627,70 +707,9 @@ fun AnalysisScreen(
                         fontSize = 45.sp
                     )
 
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Text(
-                        text = "AI Analysis Pipeline",
-                        color = Color.White,
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold
+                    Spacer(
+                        modifier = Modifier.height(10.dp)
                     )
 
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    PipelineRow("01", "Understand Video")
-                    PipelineRow("02", "Find Key Moments")
-                    PipelineRow("03", "Generate Clip Ideas")
-                    PipelineRow("04", "Prepare Export")
-                }
-
-                Spacer(modifier = Modifier.height(18.dp))
-
-                if (videoUri != null) {
-
-                    GlassCard {
-
-                        Text(
-                            text = "VIDEO READY",
-                            color = Color(0xFFAA8CFF),
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 1.5.sp
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Text(
-                            text = videoUri.toString(),
-                            color = Color(0xFF918BA7),
-                            fontSize = 10.sp,
-                            maxLines = 3,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(18.dp))
-
-                GlassCard {
-    Column(
-        modifier = Modifier.padding(18.dp)
-    ) {
-        Text(
-            text = "🚀 NEXT STEP",
-            color = Color(0xFFBB99FF),
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = "Your video is ready. Continue to AI Clip Analysis to prepare for the next stage.",
-            color = Color.White,
-            fontSize = 14.sp,
-            lineHeight = 21.sp
-        )
-    }
-                }
-     
+                    Text(
+                        text = "AI Analysis Pi
