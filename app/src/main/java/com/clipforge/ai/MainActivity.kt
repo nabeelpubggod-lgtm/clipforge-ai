@@ -649,3 +649,4 @@ fun CreateClipScreen(
         }
     }
 }
+                }
