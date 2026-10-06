@@ -713,3 +713,301 @@ fun AnalysisScreen(
 
                     Text(
                         text = "AI Analysis Pi
+/* ---------------- SIMPLE SCREEN ---------------- */
+
+@Composable
+fun SimpleScreen(
+    title: String,
+    icon: String,
+    message: String,
+    back: () -> Unit
+) {
+    AppBackground {
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+
+            Header(
+                title = title,
+                back = back
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                Spacer(
+                    modifier = Modifier.height(60.dp)
+                )
+
+                GlassCard {
+
+                    Text(
+                        text = icon,
+                        fontSize = 55.sp,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Spacer(
+                        modifier = Modifier.height(15.dp)
+                    )
+
+                    Text(
+                        text = title,
+                        color = Color.White,
+                        fontSize = 25.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Spacer(
+                        modifier = Modifier.height(10.dp)
+                    )
+
+                    Text(
+                        text = message,
+                        color = Color(0xFFAAA4BF),
+                        fontSize = 14.sp,
+                        lineHeight = 21.sp,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Spacer(
+                        modifier = Modifier.height(20.dp)
+                    )
+
+                    PurpleButton(
+                        text = "← Back to Dashboard",
+                        onClick = back
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+/* ---------------- GLASS CARD ---------------- */
+
+@Composable
+fun GlassCard(
+    content: @Composable () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(24.dp))
+            .background(
+                Color(0xFF17102F).copy(alpha = 0.92f)
+            )
+            .border(
+                width = 1.dp,
+                color = Color(0xFF6045A0).copy(alpha = 0.45f),
+                shape = RoundedCornerShape(24.dp)
+            )
+            .padding(18.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            content()
+        }
+    }
+}
+
+
+/* ---------------- PURPLE BUTTON ---------------- */
+
+@Composable
+fun PurpleButton(
+    text: String,
+    enabled: Boolean = true,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(54.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF7138FF),
+            contentColor = Color.White,
+            disabledContainerColor = Color(0xFF332A4D),
+            disabledContentColor = Color(0xFF817A91)
+        )
+    ) {
+        Text(
+            text = text,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+
+/* ---------------- TOOL BUTTON ---------------- */
+
+@Composable
+fun ToolButton(
+    icon: String,
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(18.dp))
+            .background(Color(0xFF15102C))
+            .border(
+                width = 1.dp,
+                color = Color(0xFF493878).copy(alpha = 0.55f),
+                shape = RoundedCornerShape(18.dp)
+            )
+            .clickable {
+                onClick()
+            }
+            .padding(15.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        Box(
+            modifier = Modifier
+                .size(50.dp)
+                .clip(RoundedCornerShape(15.dp))
+                .background(Color(0xFF271A50)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = icon,
+                fontSize = 23.sp
+            )
+        }
+
+        Spacer(
+            modifier = Modifier.width(14.dp)
+        )
+
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+
+            Text(
+                text = title,
+                color = Color.White,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(
+                modifier = Modifier.height(3.dp)
+            )
+
+            Text(
+                text = subtitle,
+                color = Color(0xFF928BAA),
+                fontSize = 12.sp
+            )
+        }
+
+        Text(
+            text = "›",
+            color = Color(0xFFAA8CFF),
+            fontSize = 28.sp
+        )
+    }
+}
+
+
+/* ---------------- FEATURE BOX ---------------- */
+
+@Composable
+fun FeatureBox(
+    icon: String,
+    title: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color(0xFF15102C))
+            .border(
+                width = 1.dp,
+                color = Color(0xFF493878).copy(alpha = 0.45f),
+                shape = RoundedCornerShape(16.dp)
+            )
+            .padding(vertical = 14.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Text(
+            text = icon,
+            color = Color.White,
+            fontSize = 20.sp
+        )
+
+        Spacer(
+            modifier = Modifier.height(5.dp)
+        )
+
+        Text(
+            text = title,
+            color = Color(0xFFBDB5D0),
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+
+/* ---------------- PIPELINE ROW ---------------- */
+
+@Composable
+fun PipelineRow(
+    number: String,
+    title: String
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 7.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        Box(
+            modifier = Modifier
+                .size(38.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color(0xFF2A1B55)),
+            contentAlignment = Alignment.Center
+        ) {
+
+            Text(
+                text = number,
+                color = Color(0xFFB99AFF),
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        Spacer(
+            modifier = Modifier.width(12.dp)
+        )
+
+        Text(
+            text = title,
+            color = Color.White,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium
+        )
+    }
+}
